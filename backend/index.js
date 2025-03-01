@@ -8,7 +8,7 @@ const cors = require("cors");
 const { app, server } = require("./lib/socket");
 const path = require("path");
 const PORT = process.env.PORT || 5002; // Default to 5002 if PORT is undefined
-const __dirname = path.resolve();
+
 
 // Database connection
 connectDataBase();
