@@ -12,11 +12,11 @@ import { ToastContainer, toast } from "react-toastify";
 
 function App() {
   const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore();
-  console.log(onlineUsers, "online")
+
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
-  console.log("authUser3212", authUser);
+
 
   if (isCheckingAuth && !authUser) {
     return (

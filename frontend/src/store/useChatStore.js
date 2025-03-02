@@ -1,14 +1,14 @@
 import { create } from "zustand";
 import { toast } from "react-toastify";
 import axiosInstance from "../lib/axios";
-import axios from "axios";
+
 import useAuthStore from "./useAuthStore";
 
 const useChatStore = create((set, get) => ({
   messages: [],
   users: [],
   selectedUser: null,
-  inUsersLoading: false,
+  isUserLoading: false, // Ensure consistency in naming
   isMessageLoading: false,
 
   getUsers: async () => {
@@ -22,10 +22,10 @@ const useChatStore = create((set, get) => ({
         users: response.data,
       });
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Error fetching users");
     } finally {
       set({
-        isUsersLoading: false,
+        isUserLoading: false,
       });
     }
   },
@@ -40,7 +40,7 @@ const useChatStore = create((set, get) => ({
         messages: response.data,
       });
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Error fetching messages");
     } finally {
       set({
         isMessageLoading: false,
@@ -57,7 +57,7 @@ const useChatStore = create((set, get) => ({
       );
       set({ messages: [...messages, response.data] });
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Error sending message");
     }
   },
 
@@ -66,10 +66,15 @@ const useChatStore = create((set, get) => ({
     if (!selectedUser) return;
 
     const socket = useAuthStore.getState().socket;
+    if (!socket) {
+      console.error("Socket not initialized!");
+      return;
+    }
+
     socket.on("newMessage", (newMessage) => {
-      const isMEssageSendFromSelectedUser =
+      const isMessageSendFromSelectedUser =
         newMessage.senderId === selectedUser._id;
-      if (!isMEssageSendFromSelectedUser) {
+      if (!isMessageSendFromSelectedUser) {
         return;
       }
       set({
@@ -80,8 +85,13 @@ const useChatStore = create((set, get) => ({
 
   unsubscribeFromMessages: () => {
     const socket = useAuthStore.getState().socket;
-    socket.off("newMessage");
+    if (socket) {
+      socket.off("newMessage");
+    } else {
+      console.error("Socket not initialized!");
+    }
   },
+
   setSelectedUser: (selectedUser) =>
     set({
       selectedUser,
@@ -89,3 +99,6 @@ const useChatStore = create((set, get) => ({
 }));
 
 export default useChatStore;
+
+
+
