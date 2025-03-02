@@ -1,6 +1,6 @@
-const { Server } = require("socket.io");
-const http = require("http");
-const express = require("express");
+import { Server } from "socket.io";
+import http from "http";
+import express from "express";
 
 const app = express();
 const server = http.createServer(app);
@@ -16,7 +16,7 @@ const getReceiveSocketId = (userId) => {
   return userSocketMap[userId];
 };
 
-//Used to online User
+// Used to track online users
 const userSocketMap = {};
 
 io.on("connection", (socket) => {
@@ -26,8 +26,10 @@ io.on("connection", (socket) => {
   if (userId) {
     userSocketMap[userId] = socket.id;
   }
-  // io.emit() is used to send events to all the connected clients
+
+  // Send online users to all connected clients
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
+
   socket.on("disconnect", () => {
     console.log("User disconnected", socket.id);
     delete userSocketMap[userId];
@@ -35,4 +37,4 @@ io.on("connection", (socket) => {
   });
 });
 
-module.exports = { io, app, server,getReceiveSocketId};
+export { io, app, server, getReceiveSocketId };

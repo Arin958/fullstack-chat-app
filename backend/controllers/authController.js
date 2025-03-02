@@ -1,7 +1,8 @@
-const cloudinary = require("../lib/cloudinary");
-const generateToken = require("../lib/utils");
-const User = require("../models/users/user.model");
-const bcrypt = require("bcryptjs");
+import cloudinary from "../lib/cloudinary.js";
+import generateToken from "../lib/utils.js";
+import User from "../models/users/user.model.js";
+import bcrypt from "bcryptjs";
+
 const signUp = async (req, res) => {
   const { fullName, email, password } = req.body;
   try {
@@ -12,7 +13,7 @@ const signUp = async (req, res) => {
     }
     if (password.length < 6) {
       return res.status(400).json({
-        message: "Password must be at least 6 character",
+        message: "Password must be at least 6 characters",
       });
     }
     const user = await User.findOne({ email });
@@ -27,8 +28,8 @@ const signUp = async (req, res) => {
     const hashPassword = await bcrypt.hash(password, salt);
 
     const newUser = new User({
-      fullName: fullName,
-      email: email,
+      fullName,
+      email,
       password: hashPassword,
     });
 
@@ -37,12 +38,11 @@ const signUp = async (req, res) => {
       await newUser.save();
 
       res.status(201).json({
-        _id: newUser.fullName,
+        _id: newUser._id,
         fullName: newUser.fullName,
         email: newUser.email,
         profilePic: newUser.profilePic,
       });
-    } else {
     }
   } catch (error) {
     console.log("Error in sign up Controller", error.message);
@@ -75,7 +75,7 @@ const login = async (req, res) => {
       fullName: user.fullName,
       email: user.email,
       profilePic: user.profilePic,
-      message: "Login Succesfull",
+      message: "Login Successful",
     });
   } catch (error) {
     console.log("Error in login controller", error.message);
@@ -92,7 +92,7 @@ const logout = async (req, res) => {
       message: "Logout successfully",
     });
   } catch (error) {
-    console.log("Error while login out");
+    console.log("Error while logging out");
     res.status(500).json({
       message: "Internal Server Error",
     });
@@ -110,13 +110,11 @@ const updateProfile = async (req, res) => {
       });
     }
 
-    const uploadResoponse = await cloudinary.uploader.upload(
-      profilePic
-    );
+    const uploadResponse = await cloudinary.uploader.upload(profilePic);
 
     const updateUser = await User.findByIdAndUpdate(
       userId,
-      { profilePic: uploadResoponse.secure_url },
+      { profilePic: uploadResponse.secure_url },
       { new: true }
     );
 
@@ -129,7 +127,7 @@ const updateProfile = async (req, res) => {
   }
 };
 
-const checkAuth = async (req,res) => {
+const checkAuth = async (req, res) => {
   try {
     res.status(200).json(req.user);
   } catch (error) {
@@ -140,4 +138,4 @@ const checkAuth = async (req,res) => {
   }
 };
 
-module.exports = { signUp, login, logout, updateProfile, checkAuth };
+export { signUp, login, logout, updateProfile, checkAuth };

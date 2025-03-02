@@ -1,14 +1,16 @@
-require("dotenv").config();
-const cookieParser = require("cookie-parser");
-const express = require("express");
-const authRouter = require("./routes/authRoute");
-const connectDataBase = require("./models/db");
-const messageRouter = require("./routes/messageRoute");
-const cors = require("cors");
-const { app, server } = require("./lib/socket");
-const path = require("path");
-const PORT = process.env.PORT || 5002; // Default to 5002 if PORT is undefined
+import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
+import express from "express";
+import authRouter from "./routes/authRoute.js";
+import connectDataBase from "./models/db.js";
+import messageRouter from "./routes/messageRoute.js";
+import cors from "cors";
+import { app, server } from "./lib/socket";
+import path from "path";
 
+dotenv.config();
+
+const PORT = process.env.PORT || 5002; // Default to 5002 if PORT is undefined
 
 // Database connection
 connectDataBase();
@@ -27,11 +29,11 @@ app.use(
 app.use("/api/auth", authRouter);
 app.use("/api/messages", messageRouter);
 
-if(process.env.NODE_ENV==="production"){
+if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "..frontend/dist")));
-  app.get("*", (req,res) => {
-    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"))
-  })
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+  });
 }
 
 // Start server

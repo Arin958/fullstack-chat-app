@@ -1,4 +1,4 @@
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
 
 const generateToken = (userId, res) => {
   const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
@@ -7,12 +7,12 @@ const generateToken = (userId, res) => {
 
   res.cookie("token", token, {
     maxAge: 7 * 24 * 60 * 60 * 1000,
-    httpOnly: true, // prevent xss attacks cross site scriting attacks
-    sameSite: "strict", // CSRF attacks cross-site request forgery attack
+    httpOnly: true, // prevent XSS attacks (Cross-Site Scripting attacks)
+    sameSite: "strict", // Prevent CSRF attacks (Cross-Site Request Forgery attack)
     secure: process.env.NODE_ENV !== "development",
   });
 
   return token;
 };
 
-module.exports = generateToken;
+export default generateToken;

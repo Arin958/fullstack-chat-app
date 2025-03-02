@@ -1,7 +1,8 @@
-require("dotenv").config();
-const connectDataBase = require("../models/db");
-const User = require("../models/users/user.model");
+import dotenv from "dotenv";
+import connectDataBase from "../models/db.js";
+import User from "../models/users/user.model.js";
 
+dotenv.config();
 
 const seedUser = [
   {
@@ -102,7 +103,7 @@ const seedDatabase = async () => {
   try {
     await connectDataBase();
     await User.insertMany(seedUser);
-    console.log("Database seeded succefully");
+    console.log("Database seeded successfully");
   } catch (error) {
     console.log("Error seeding database", error);
   }
