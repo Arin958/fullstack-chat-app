@@ -5,7 +5,7 @@ import authRouter from "./routes/authRoute.js";
 import connectDataBase from "./models/db.js";
 import messageRouter from "./routes/messageRoute.js";
 import cors from "cors";
-import { app, server } from "./lib/socket";
+import { app, server } from "./lib/socket.js";
 import path from "path";
 
 dotenv.config();
